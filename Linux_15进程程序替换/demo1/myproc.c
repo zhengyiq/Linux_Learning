@@ -1,0 +1,63 @@
+#include <stdio.h> 
+#include <unistd.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+
+char* const myargv[] = {
+  "otherproc",
+  NULL, 
+  "ls",
+  "-a",
+  "-l",
+  "-n", 
+  NULL
+};
+
+int main()
+{
+  extern char** environ;
+  pid_t id = fork();
+  if(id == 0)
+  {
+    // child
+    printf("我是子进程：%d\n", getpid());
+    // 如果替换成功，不会有返回值，如果替换失败必定返回
+    // 不用对该函数的返回值判断，只要继续向后运行一定是失败的
+    // execl("/bin/ls", "ls", "-a", "-l", NULL);
+    // execl("/bin/ls", "ls", "-a", "-l", NULL);
+    // execv("/bin/ls", myargv);
+    // execlp("ls", "ls", "-a", "-n", "-l", NULL);
+    // execvp("ls" , myargv);
+    // execl("/bin/lssss", "ls", "-a", "-l", NULL);
+    char* const myenv[] = {
+      "MYENV=YouCanSeeMe",
+      NULL
+    }; 
+    putenv("MYENV=YouCanSeeMe");
+    // execle("./exec/otherproc", "otherproc", NULL, environ);
+    execve("./exec/otherproc", myargv, environ);
+    exit(1);
+  }
+  // parent
+  sleep(1);
+  int status = 0;
+  printf("我是父进程：%d\n", getpid());
+  waitpid(id, &status, 0);
+  printf("child exit code:%d\n", WEXITSTATUS(status));
+
+  
+  // printf("begin...\n");
+  // printf("begin...\n");
+  // printf("begin...\n");
+  // printf("begin...\n");
+
+  // printf("我已经是一个进程了pid:%d\n", getpid());
+
+  // execl("/bin/ls", "ls", "-a", "-l", NULL);
+  // printf("end...\n");
+  // printf("end...\n");
+  // printf("end...\n");
+  // printf("end...\n");
+
+}
