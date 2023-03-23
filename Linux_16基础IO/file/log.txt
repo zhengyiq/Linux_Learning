@@ -1,2 +1,3 @@
-bbbbbbbbbbbbbbb, 1
-bbbbbbbbbbbbbbb, 1
+hello write
+hello fprintf
+hello fprintf
