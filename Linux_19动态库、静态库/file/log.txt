@@ -1,0 +1,5 @@
+hello my fwrite:5
+hello my fwrite:4
+hello my fwrite:3
+hello my fwrite:2
+hello my fwrite:1
