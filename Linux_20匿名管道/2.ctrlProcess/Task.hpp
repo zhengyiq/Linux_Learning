@@ -15,18 +15,24 @@ void PrintLog()
 
 void InsertMySQL()
 {
-    std::cout << "执行数据库任务，正在被执行..." << std::endl;
+    std::cout << "pid: "<< getpid() << "执行数据库任务，正在被执行..." << std::endl;
 }
 
 void NetRequest()
 {
-    std::cout << "执行网络请求任务，正在被执行..." << std::endl;
+    std::cout << "pid: "<< getpid() << "执行网络请求任务，正在被执行..." << std::endl;
 }
+
+// void ExitProcess()
+// {
+//     exit(0);
+// }
 
 //约定，每一个command都必须是4字节
 #define COMMAND_LOG 0
 #define COMMAND_MYSQL 1
 #define COMMAND_REQEUST 2
+// #define COMMAND_QUIT 3
 
 class Task
 {
@@ -36,6 +42,7 @@ public:
         funcs.push_back(PrintLog);
         funcs.push_back(InsertMySQL);
         funcs.push_back(NetRequest);
+        // funcs.push_back(ExitProcess);
     }
     void Execute(int command)
     {
