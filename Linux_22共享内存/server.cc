@@ -3,15 +3,27 @@
 int main()
 {
     Init init(SERVER);
+
+    // start指向了共享内存的其实空间
     char *start = init.getStart();
 
     int n = 0;
+
+    // 在通信的时候，没有使用任何的接口？一旦共享内存映射到进程的地址空间，该共享内存就直接被所有的进程直接看到了
+    // 因为共享内存的这种特性，可以让进程通信的时候减少拷贝次数，所以共享内存是所有进程间通信速度最快的。
+    // 共享内存没有任何的保护机制(同步互斥) -- 为什么? 管道是通过系统接口通信的，共享内存直接通信
     while (n <= 30)
     {
         cout << "client -> server# " << start << endl;
         sleep(1);
         n++;
     }
+
+    // 扩展内容：
+    // 1. client写完了，才通知server读取，刚开始一定先让client运行
+    // 2. 命名管道
+    // 3. client写完了，才通知server读取，读取完了才让client进行写入 两个管道
+    // 
 
     // // 1. 创建key
     // key_t k = getKey();

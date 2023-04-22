@@ -23,6 +23,7 @@ using namespace std;
 #define PATHNAME "."
 #define PROJID 0x6666
 
+// 共享内存的大小是以PAGE页(4KB)为单位的
 const int gsize = 4096; // 暂时
 
 key_t getKey()
