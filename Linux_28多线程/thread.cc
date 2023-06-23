@@ -11,36 +11,36 @@ using namespace std;
 // 1. 函数执行完毕
 // 2. pthread_exit(void*)
 
-void *threadRun(void* args)
-{
-    const char*name = static_cast<const char *>(args);
+// void *threadRun(void* args)
+// {
+//     const char*name = static_cast<const char *>(args);
 
-    int cnt = 5;
-    while(cnt)
-    {
-        cout << name << " is running: " << cnt-- << " obtain self id: " << pthread_self() << endl;
-        if (cnt == 2) pthread_cancel(pthread_self());
-        sleep(1);
-    }
+//     int cnt = 5;
+//     while(cnt)
+//     {
+//         cout << name << " is running: " << cnt-- << " obtain self id: " << pthread_self() << endl;
+//         if (cnt == 2) pthread_cancel(pthread_self());
+//         sleep(1);
+//     }
 
-    pthread_exit((void*)11); 
+//     pthread_exit((void*)11); 
 
-    // PTHREAD_CANCELED; #define PTHREAD_CANCELED ((void *) -1)
-}
+//     // PTHREAD_CANCELED; #define PTHREAD_CANCELED ((void *) -1)
+// }
 
-int main()
-{
-    pthread_t tid;
-    pthread_create(&tid, nullptr, threadRun, (void*)"thread 1");
-    // sleep(3);
+// int main()
+// {
+//     pthread_t tid;
+//     pthread_create(&tid, nullptr, threadRun, (void*)"thread 1");
+//     // sleep(3);
 
-    // pthread_cancel(tid);
+//     // pthread_cancel(tid);
 
-    void *ret = nullptr;
-    pthread_join(tid, &ret);
-    cout << " new thread exit : " << (int64_t)ret << "quit thread: " << tid << endl;
-    return 0;
-}
+//     void *ret = nullptr;
+//     pthread_join(tid, &ret);
+//     cout << " new thread exit : " << (int64_t)ret << "quit thread: " << tid << endl; // int有精度损失由于在64位的系统下void*有8字节而int只有四字节
+//     return 0;
+// }
 
 // enum 
 // {
@@ -174,20 +174,20 @@ int main()
 //         char* tname = new char[64];
 //         // snprintf(tname, sizeof(tname), "thread-%d", i+1); // 如果还是sizeof就只有指针大小的字节
 //         snprintf(tname, 64, "thread-%d", i+1);
-//         pthread_create(tid+i, nullptr, thread_run, tname);
+//         pthread_create(tid+i, nullptr, thread_run, tname);// 没有传递缓冲区，传递的是缓冲区的地址
 //     }
 
 //     void* ret = nullptr;
 //     for (int i = 0; i < NUM; ++i)
 //     {
 //         // int n = pthread_join(tid[i], nullptr); // 阻塞式等待
-//         int n = pthread_join(tid[i], &ret); // 阻塞式等待
+//         int n = pthread_join(tid[i], &ret); // 阻塞式等待；线程异常退出就会导致主线程退出，因此不需要考虑异常
 //         if (n != 0)
 //         {
 //             cerr << "pthread_join error" << endl;
 //         }
 
-//         cout << "thread quit: " << (uint64_t)ret << endl;
+//         cout << "thread quit: " << (uint64_t)ret << endl; // 把这个数当做整数
 //     }
 //     cout << "all thread quit ..." << endl;
 //     return 0;
@@ -201,6 +201,17 @@ int main()
 //     //     cout << "main thread running" << endl;
 //     //     sleep(2);
 //     // }
+// }
+
+// void* thread_run(void* args)
+// {
+//     while (true)
+//     {
+//         cout << "new thread running" << endl;
+//         sleep(1);
+//     }
+
+//     return nullptr;
 // }
 
 // int main()
