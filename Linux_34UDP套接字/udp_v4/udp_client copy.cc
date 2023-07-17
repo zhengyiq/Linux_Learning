@@ -1,32 +1,11 @@
-// 客户端处理逻辑线程化
 #include "udp_client.hpp"
-#include <pthread.h>
+
 // 127.0.0.1 本地回环，表示的就是当前的主机，通常用来进行本地通信或者测试
 
 static void usage(std::string proc)
 {
     std::cout << "Usage:\n\t" << proc << " serverip serverport\n"
               << std::endl;
-}
-
-void* recver(void* args)
-{
-    int sock = *static_cast<int*>(args);
-
-    while (true)
-    {
-        // 接收
-        char buffer[2048];
-        struct sockaddr_in temp;
-        socklen_t len = sizeof(temp);
-        int n = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr *)&temp, &len);
-        if (n > 0)
-        {
-            buffer[n] = 0;
-            // std::cout << "server echo# " << buffer << std::endl;
-            std::cout << buffer << std::endl;
-        }
-    }
 }
 
 // ./udp_client serverip serverport
@@ -59,14 +38,11 @@ int main(int argc, char *argv[])
     server.sin_port = htons(serverport);
     server.sin_addr.s_addr = inet_addr(serverip.c_str());
 
-    pthread_t tid;
-    pthread_create(&tid, nullptr, recver, &sock);
-
     while (true)
     {
         // 用户输入
         std::string message;
-        std::cerr << "please Enter# "; // 往2号文件发送
+        std::cout << "please Enter# ";
         // std::cin >> message;
         getline(std::cin, message);
 
@@ -76,6 +52,16 @@ int main(int argc, char *argv[])
         // 发送
         sendto(sock, message.c_str(), message.size(), 0, (struct sockaddr *)&server, sizeof(server));
 
+        // 接收
+        char buffer[2048];
+        struct sockaddr_in temp;
+        socklen_t len = sizeof(temp);
+        int n = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr *)&temp, &len);
+        if (n > 0)
+        {
+            buffer[n] = 0;
+            std::cout << "server echo# " << buffer << std::endl;
+        }
     }
 
     return 0;

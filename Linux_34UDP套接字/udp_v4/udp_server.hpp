@@ -28,7 +28,7 @@ namespace ns_server
             pthread_mutex_init(&lock, nullptr);
 
             p = new Thread(1, std::bind(&UdpServer::Recv, this));
-            c = new Thread(1, std::bind(&UdpServer::Broadcast, this));
+            c = new Thread(2, std::bind(&UdpServer::Broadcast, this));
 
         }
 
@@ -91,6 +91,8 @@ namespace ns_server
                 if (n > 0) buffer[n] = '\0';
                 else continue;
 
+                std::cout << "recv done ..." << std::endl;
+
                 // 提取client信息
                 std::string clientip = inet_ntoa(peer.sin_addr); // 把一个四字节的IP转化为字符串
                 uint16_t clientport = ntohs(peer.sin_port); // 将从网络中获取的端口号转换成主机
@@ -104,8 +106,9 @@ namespace ns_server
                 // 如果不存在就插入，如果存在，什么都不做
                 addUser(name, peer);
 
-                rq.push(buffer);
-
+                std::string message = name + " >> " + buffer;
+                
+                rq.push(message);    
                 // // 做业务处理
                 // std::string message = service_(buffer);
 
