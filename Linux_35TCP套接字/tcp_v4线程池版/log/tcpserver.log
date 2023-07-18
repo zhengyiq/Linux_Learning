@@ -1,0 +1,26 @@
+[Info] [2023-7-18 11:9:16] [7514] create socket success, code: 0, error string: Success
+[Info] [2023-7-18 11:9:16] [7514] bind socket success, code: 0, error string: Success
+[Info] [2023-7-18 11:9:16] [7514] listen socket success, code: 0, error string: Success
+[Info] [2023-7-18 11:9:20] [7515] 获取新连接成功: 4 from 3, who: 127.0.0.1 - 56286
+[Debug] [2023-7-18 11:9:20] [7515] 线程池单例形成
+[Debug] [2023-7-18 11:9:20] [7515] 0 thread running
+[Debug] [2023-7-18 11:9:20] [7515] 1 thread running
+[Debug] [2023-7-18 11:9:20] [7515] 2 thread running
+[Debug] [2023-7-18 11:9:20] [7515] 3 thread running
+[Debug] [2023-7-18 11:9:20] [7515] 4 thread running
+[Debug] [2023-7-18 11:9:20] [7515] 5 thread running
+[Debug] [2023-7-18 11:9:20] [7515] 6 thread running
+[Debug] [2023-7-18 11:9:20] [7515] 7 thread running
+[Debug] [2023-7-18 11:9:20] [7515] 8 thread running
+[Debug] [2023-7-18 11:9:20] [7515] 9 thread running
+[Debug] [2023-7-18 11:9:20] [7515] 10 thread running
+[Debug] [2023-7-18 11:9:20] [7515] 11 thread running
+[Debug] [2023-7-18 11:9:20] [7515] 12 thread running
+[Debug] [2023-7-18 11:9:20] [7515] 13 thread running
+[Debug] [2023-7-18 11:9:20] [7515] 14 thread running
+[Debug] [2023-7-18 11:9:20] [7515] 15 thread running
+[Debug] [2023-7-18 11:9:20] [7515] 16 thread running
+[Debug] [2023-7-18 11:9:20] [7515] 17 thread running
+[Debug] [2023-7-18 11:9:20] [7515] 18 thread running
+[Debug] [2023-7-18 11:9:20] [7515] 19 thread running
+[Debug] [2023-7-18 11:9:21] [7515] 127.0.0.1-56286# asdad
