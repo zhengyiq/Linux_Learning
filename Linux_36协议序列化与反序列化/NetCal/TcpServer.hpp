@@ -9,9 +9,10 @@
 namespace tcpserver_ns
 {
     using namespace protocol_ns;
+    class TcpServer;
     
     using func_t = std::function<Response (const Request&)>;
-    class TcpServer;
+    
     class ThreadData
     {
     public:
@@ -46,9 +47,10 @@ namespace tcpserver_ns
         static void* ThreadRoutine(void* args)
         {
             pthread_detach(pthread_self());
+            logMessage(Debug, "thread running ...");
             ThreadData* td = static_cast<ThreadData*>(args);
             td->_tsvrp->ServiceIO(td->_sock, td->_ip, td->_port);
-            logMessage(Debug, "thread running ...");
+            logMessage(Debug, "thread quit, client quit ... ");
             delete td;
             return nullptr;
         }
@@ -73,29 +75,50 @@ namespace tcpserver_ns
         // 这个函数是被多线程调用的
         void ServiceIO(int sock, const std::string &ip, const uint16_t &port)
         {
-            // 1. read/recv - 如何正确的读，继续设计协议，保证用户正确的获得一个完整的报文string！
-            // 你怎么保证你读到的string 就是一个完整的string风格的请求呢？？不能！
+            std::string inbuffer; // 放在外面，防止每次循环被释放
+            while(true)
+            {
+                // 0. 怎么保证读到的是一个完整的字符串报文？ "7"\r\n""10 + 20"\r\n
+                std::string package;
+                int n = ReadPackage(sock, inbuffer, &package);
+                if (n == -1)
+                    break;
+                else if (n == 0)
+                    continue;
+                else
+                {
+                    // 一定得到了一个 "7"\r\n""10 + 20"\r\n
+                    // 1. 你需要的只是有效载荷 "10 + 20"
+                    package = RemoveHeader(package, n);
+                    // decode
 
-            // 我们进行一直循环读取，边读取，边检测，测试
-            char buffer[1024];
-            ssize_t s = recv(sock, buffer, sizeof(buffer), 0); // read
+                    // 2. 假设已经读到了一个完整的string "10 + 20"
+                    Request req;
+                    req.Deserialize(package); // 对读到的request字符串要进行反序列化
 
-            // 2. 假设已经读到了一个完整的string
-            Request req;
-            req.Deserialize(str); // 对读到的request字符串要进行反序列化
+                    // 3. 直接提取用户的请求数据啦
+                    Response resp = _func(req); // 业务逻辑！
 
-            // 3. 直接提取用户的请求数据啦
-            Response resp = _func(req); // 业务逻辑！
+                    // 4. 给用户返回响应 - 序列化
+                    std::string send_string;
+                    resp.Serialize(&send_string); // 对计算完毕的response结构要进行序列化，形成可发送字符串
 
-            // 4. 给用户返回响应 - 序列化
-            std::string send_string;
-            resp.Serialize(&send_string); // 对计算完毕的response结构要进行序列化，形成可发送字符串
+                    // 5. 添加报头
+                    send_string = AddHeader(send_string);
 
-            // 5. 发送到网络 -- 弱化
+                    //encode
+                    // 6. 发送到网络 -- 弱化
+                    send(sock, send_string.c_str(), send_string.size(), 0);
+                }
+
+            }
+            close(sock);
         }
 
         ~TcpServer()
-        {}
+        {
+            _listensock.Close();
+        }
     private:
         uint16_t _port;
         Sock _listensock;

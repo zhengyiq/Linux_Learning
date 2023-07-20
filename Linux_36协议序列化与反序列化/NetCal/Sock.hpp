@@ -18,7 +18,8 @@ class Sock
 {
 public:
     Sock() : _sock(defaultfd)
-    {}
+    {
+    }
 
     void Socket()
     {
@@ -37,6 +38,7 @@ public:
         local.sin_family = AF_INET;
         local.sin_port = htons(port);
         local.sin_addr.s_addr = INADDR_ANY;
+
         if (bind(_sock, (struct sockaddr *)&local, sizeof(local)) < 0)
         {
             logMessage(Fatal, "bind error, code: %d, errstring: %s", errno, strerror(errno));
@@ -46,7 +48,7 @@ public:
 
     void Listen()
     {
-        if (listen(_sock, gbacklog) < 0);
+        if (listen(_sock, gbacklog) < 0)
         {
             logMessage(Fatal, "listen error, code: %d, errstring: %s", errno, strerror(errno));
             exit(LISTEN_ERR);
@@ -56,8 +58,8 @@ public:
     int Accept(std::string *clientip, uint16_t *clientport)
     {
         struct sockaddr_in temp;
-        socklen_t  len = sizeof(temp);
-        int sock = accept(_sock, (struct sockaddr*)&temp, &len);
+        socklen_t len = sizeof(temp);
+        int sock = accept(_sock, (struct sockaddr *)&temp, &len);
         if (sock < 0)
         {
             logMessage(Warning, "accept error, code: %d, errstring: %s", errno, strerror(errno));
@@ -78,20 +80,23 @@ public:
         server.sin_port = htons(serverport);
         server.sin_addr.s_addr = inet_addr(serverip.c_str());
 
-        return connect(_sock, (struct sockaddr *)&server, sizeof(server));        
+        return connect(_sock, (struct sockaddr *)&server, sizeof(server));
     }
 
     int Fd()
     {
         return _sock;
     }
-    
-    ~Sock()
+
+    void Close()
     {
         if (_sock != defaultfd)
             close(_sock);
     }
 
+    ~Sock()
+    {
+    }
 
 private:
     int _sock;
